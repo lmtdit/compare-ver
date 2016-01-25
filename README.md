@@ -31,18 +31,18 @@ $ npm install --save compare-ver
 ### compareVer.gt(stringA,stringB)
 Return number 1 0 -1 -2 -3 -100
 
-if stringA  <  stringB then return -1
-if stringA === stringB then return 0
-if stringA  >  stringB then return 1
-if input error value then return < -1
+- if stringA  <  stringB then return -1
+- if stringA === stringB then return 0
+- if stringA  >  stringB then return 1
+- if input error value then return < -1
 
 ### compareVer.lt(stringA,stringB)
 Return number 1 0 -1 -2 -3 -100
 
-if stringA  <  stringB then return 1
-if stringA === stringB then return 0
-if stringA  >  stringB then return -1
-if input error value then return < -1
+- if stringA  <  stringB then return 1
+- if stringA === stringB then return 0
+- if stringA  >  stringB then return -1
+- if input error value then return < -1
 
 ```js
 var compareVer = require('compare-ver');
