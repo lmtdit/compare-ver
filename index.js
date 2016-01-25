@@ -45,13 +45,10 @@
   }
 })(this, function() {
   'use strict';
-  var _compareVer;
-  _compareVer = function(newVer, oldVer) {
+  var _compare, _compareVer;
+  _compare = function(newVer, oldVer) {
     var VER_RE, compareNum, isTrue, maxLen, newArr, newLen, newMatch, oldArr, oldLen, oldMatch, zerofill;
     VER_RE = /(\d+\.){1,9}\d+/;
-    if (arguments.length !== 2) {
-      return -100;
-    }
     if (typeof newVer !== 'string') {
       return -2;
     }
@@ -101,6 +98,24 @@
         return isTrue;
       }
     }
+  };
+  _compareVer = {
+    gt: function() {
+      if (arguments.length === 2) {
+        return _compare(arguments[0], arguments[1]);
+      } else {
+        return -100;
+      }
+    },
+    lt: function() {
+      if (arguments.length === 2) {
+        return _compare(arguments[0], arguments[1]);
+      } else {
+        return -100;
+      }
+    },
+    sort: function() {},
+    max: function() {}
   };
   return _compareVer;
 });

@@ -44,10 +44,10 @@
         root.compareVer = factory()
 )(this, ->
     'use strict'
-    _compareVer = (newVer,oldVer)->
+    _compare = (newVer,oldVer)->
         VER_RE = /(\d+\.){1,9}\d+/
-        if arguments.length != 2
-          return -100
+        # if arguments.length != 2
+        #   return -100
         if typeof newVer != 'string'
             return -2
         if typeof oldVer != 'string'
@@ -86,5 +86,23 @@
                     _new == _old && newArr.length > 0 && compareNum()
                 compareNum()
                 return isTrue
+    _compareVer = {
+        gt:->
+            if arguments.length == 2
+                return _compare(arguments[0],arguments[1])
+            else
+                return -100
+        lt:->
+            if arguments.length == 2
+                return _compare(arguments[0],arguments[1])
+            else
+                return -100
+        sort:->
+
+
+
+        max:->
+
+    }
     return _compareVer
 )
