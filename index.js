@@ -66,6 +66,8 @@
     if (!oldMatch || oldMatch[0] !== oldVer) {
       return -5;
     }
+    newVer = newVer.replace(/^0/, '');
+    oldVer = oldVer.replace(/^0/, '');
     if (newVer === oldVer) {
       return 0;
     } else {
@@ -75,11 +77,8 @@
       oldLen = oldArr.length;
       maxLen = Math.max(newLen, oldLen);
       zerofill = function() {
-        if (newArr.length < maxLen) {
-          newArr.push(0);
-        } else if (oldArr.length < maxLen) {
-          oldArr.push(0);
-        }
+        newArr.length < maxLen && newArr.push('0');
+        oldArr.length < maxLen && oldArr.push('0');
         return newArr.length !== oldArr.length && zerofill();
       };
       newLen !== oldLen && zerofill();

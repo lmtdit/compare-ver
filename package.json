@@ -1,6 +1,6 @@
 {
   "name": "compare-ver",
-  "version": "0.0.2",
+  "version": "1.0.1",
   "description": "Compares two software version numbers (only number)",
   "main": "index.js",
   "license": "MIT",
@@ -33,10 +33,5 @@
   "directories": {
     "test": "tests"
   },
-  "dependencies": {
-    "karma": "^0.12.37",
-    "karma-chrome-launcher": "^0.1.12",
-    "should": "^4.6.5",
-    "karma-mocha": "^0.1.10"
-  }
+  "dependencies": {}
 }
