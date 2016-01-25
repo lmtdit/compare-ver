@@ -7,7 +7,6 @@ module.exports = function(config) {
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
-
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha'],
@@ -18,7 +17,7 @@ module.exports = function(config) {
       'node_modules/mocha/mocha.js',
       'node_modules/should/should.js',
       'index.js',
-      'tests/test.js'
+      'tests/*.js'
     ],
 
 

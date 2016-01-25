@@ -12,41 +12,56 @@ This code just uses Array.shift and recursive, which means that it can run in IE
 $ npm install --save compare-ver
 ```
 
+
+## version rules
+
+```
+{num}.{num}. …… {num}.{num}
+```
+
+*e.g:*
+```
+"1.7" < "1.7.1" < "1.7.10" < "1.7.10.01" < "1.7.0.10.010"
+"1.0" < "1.0.1" < "2.0" < "2.0.0.1" < "2.0.1"
+"1.0.0.0" < "1.0.1.0" < "2.0.0.0" < "2.0.0.1" < "2.0.1.0"
+```
+
 ## Usage
+
+### compareVer.gt(stringA,stringB)
+Return number 1 0 -1 -2 -3 -100
+
+if stringA  <  stringB then return -1
+if stringA === stringB then return 0
+if stringA  >  stringB then return 1
+if input error value then return < -1
+
+### compareVer.lt(stringA,stringB)
+Return number 1 0 -1 -2 -3 -100
+
+if stringA  <  stringB then return 1
+if stringA === stringB then return 0
+if stringA  >  stringB then return -1
+if input error value then return < -1
 
 ```js
 var compareVer = require('compare-ver');
 
-console.log(compareVer.gt("0.0.2","0.0.1"));//1
-console.log(compareVer.gt("0.0.10","0.0.1")); //1
-console.log(compareVer.gt("0.0.10","0.0.2")); //1
-console.log(compareVer.gt("0.9.0","0.9")); //1
-console.log(compareVer.gt("0.10.0","0.9.0")); //1
-console.log(compareVer.gt("1.7", "1.07")); //1
-console.log(compareVer.gt("1.0.07", "1.0.007")); //1
+//gt
+console.log(compareVer.gt("0.0.2","0.0.1")); //1
+console.log(compareVer.gt("0.9.1","0.9.1")); //0
 
-console.log(compareVer.gt("0.3","0.3")); //0
-console.log(compareVer.gt("0.0.3","0.0.3")); //0
-console.log(compareVer.gt("0.0.3.0","0.0.3.0")); //0
-console.log(compareVer.gt("00.3","0.3")); //0
-console.log(compareVer.gt("00.3","00.3")); //0
-console.log(compareVer.gt("01.0.3","1.0.3")); //0
-console.log(compareVer.gt("1.0.3","01.0.3")); //0
+//lt
+console.log(compareVer.lt("0.0.2","0.0.1")); //-1
+console.log(compareVer.lt("0.9.1","0.9.1")); //0
 
-console.log(compareVer.gt("0.2.0","1.0.0")); //-1
-console.log(compareVer.gt('0.0.2.2.0',"0.0.2.3")); //-1
-console.log(compareVer.gt('0.0.2.0',"0.0.2")); //-1
-console.log(compareVer.gt('0.0.2',"0.0.2.0")); //-1
-console.log(compareVer.gt("1.07", "1.7")); //-1
-console.log(compareVer.gt("1.0.007", "1.0.07")); //-1
+//clean
+console.log(compareVer.clean(['1.1.b','1.0.1',12121])); //['1.0.1']
 
-console.log(compareVer.gt()); //-100
-console.log(compareVer.gt("0.0.2")); //-100
-console.log(compareVer.gt("0.0.2","0.0.2","0.0.2")); //-100
-console.log(compareVer.gt(1212,"0.0.2")); //-2
-console.log(compareVer.gt("0.0.2",1212)); //-3
-console.log(compareVer.gt('1.abc.2',"1.0.2")); //-4
-console.log(compareVer.gt('1.0.2',"1.abc.2")); //-5
+var arr = ["1.7.0","1.7","1.ab.8","1.70.0","1.90","1.9.0","1.8"];
+compareVer.sort(arr); //->["1.7","1.7.0","1.8","1.9.0","1.70.0","1.90"]
+compareVer.max(arr); //->"1.90"
+compareVer.min(arr); //->"1.7"
 ```
 
 ## License

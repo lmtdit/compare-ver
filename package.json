@@ -1,6 +1,6 @@
 {
   "name": "compare-ver",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Compares two software version numbers (only number)",
   "main": "index.js",
   "license": "MIT",

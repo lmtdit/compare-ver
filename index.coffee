@@ -1,38 +1,39 @@
-###*
-* Compares two software version numbers (only number)
-*
-* This function was born in http://stackoverflow.com/a/6832721.
-* @parse string newVer (e.g. "1.7.1" or "1.2.1").
-* @parse string oldVer (e.g. "1.7.1" or "1.2.1").
-* @return <,return -1
-*         =,return 0
-*         >,return 1
-*         error, return < -1
-* eg:
-*   compareVer("0.0.2","0.0.1") //1
-*   compareVer("0.0.10","0.0.1") //1
-*   compareVer("0.0.10","0.0.2") //1
-*   compareVer("0.9.0","0.9") //1
-*   compareVer("0.10.0","0.9.0") //1
-*   compareVer("1.7", "1.07") //1
-*   compareVer("1.0.07", "1.0.007") //1
-*
-*   compareVer("0.3","0.3") //0
-*   compareVer("0.0.3","0.0.3") //0
-*   compareVer("0.0.3.0","0.0.3.0") //0
-*
-*   compareVer("0.2.0","1.0.0") //-1
-*   compareVer('0.0.2.2.0',"0.0.2.3") //-1
-*   compareVer('0.0.2.0',"0.0.2") //-1
-*   compareVer('0.0.2',"0.0.2.0") //-1
-*   compareVer("1.07", "1.7") //-1
-*   compareVer("1.0.007", "1.0.07") //-1
-*
-*   compareVer("0.0.2") //-100
-*   compareVer(1212,"0.0.2") //-2
-*   compareVer("0.0.2",1212) //-3
-*   compareVer('1.a.2',"1.0.2") //-4
-*   compareVer('1.0.2',"1.a.2") //-5
+###!
+ * Compares two software version numbers (only number)
+ *
+ * @parse String newVer (e.g. "1.7.1" or "1.2.1").
+ * @parse String oldVer (e.g. "1.7.1" or "1.2.1").
+ * @return Object {
+ *       gt:
+ *          <,return -1
+ *          =,return 0
+ *          >,return 1
+ *          error, return < -1
+ *
+ *      lt:
+ *          <,return 1
+ *          =,return 0
+ *          >,return -1
+ *          error, return < -1
+ *
+ *      clean:
+ *          ['dfdsfd','1.0.1']      -> ['1.0.1']
+ *          ['1.1.b','1.0.1']       -> ['1.0.1']
+ *          ['1.1.b','1.0.1',12121] -> ['1.0.1']
+ *
+ *      sort:
+ *          ["1.7.0","1.7","1.ab.8","1.70.0","1.90","1.9.0","1.8"]  ->
+ *          ["1.7","1.7.0","1.8","1.9.0","1.70.0","1.90"]
+ *
+ *      max:
+ *          ["1.7.0","1.7","1.ab.8","1.70.0","1.90","1.9.0","1.8"]  ->
+ *          return "1.90"
+ *
+ *      min:
+ *          ["1.7.0","1.7","1.ab.8","1.70.0","1.90","1.9.0","1.8"]  ->
+ *          return "1.7"
+ *
+ *  }
 ###
 ((root, factory)->
     if typeof exports == 'object'
@@ -44,21 +45,16 @@
         root.compareVer = factory()
 )(this, ->
     'use strict'
+    VER_RE = /(\d+\.){1,9}\d+/
     _compare = (newVer,oldVer)->
-        VER_RE = /(\d+\.){1,9}\d+/
         # if arguments.length != 2
         #   return -100
-        if typeof newVer != 'string'
+        if typeof newVer + typeof oldVer != 'stringstring'
             return -2
-        if typeof oldVer != 'string'
-            return -3
         newMatch = newVer.match(VER_RE)
-        if not newMatch or newMatch[0] != newVer
-            return -4
         oldMatch = oldVer.match(VER_RE)
-        if not oldMatch or oldMatch[0] != oldVer
-            return -5
-
+        if (not newMatch or newMatch[0] != newVer) or (not oldMatch or oldMatch[0] != oldVer)
+            return -3
         newVer = newVer.replace(/^0/,'')
         oldVer = oldVer.replace(/^0/,'')
 
@@ -78,30 +74,84 @@
             if newArr.toString() == oldArr.toString()
                 return if newLen > oldLen then 1 else -1
             else
-                isTrue = -1
+                isTrue = null
                 compareNum = ->
-                    _new = ~~newArr.shift()
-                    _old = ~~oldArr.shift()
-                    _new > _old && isTrue = 1
-                    _new == _old && newArr.length > 0 && compareNum()
+                    newNum = newArr.shift()
+                    oldNum = oldArr.shift()
+                    _newNum = ~~newNum
+                    _oldNum = ~~oldNum
+                    if _newNum == 0 and _oldNum == 0
+                        isTrue = 0
+                    else if _newNum > _oldNum
+                        isTrue = 1
+                    else if _newNum < _oldNum
+                        isTrue = -1
+                    else
+                        isTrue = if newNum.length > oldNum.length then  -1 else 1
+                    _newNum == _oldNum && newArr.length > 0 && compareNum()
                 compareNum()
                 return isTrue
+
     _compareVer = {
-        gt:->
+        gt: ->
             if arguments.length == 2
                 return _compare(arguments[0],arguments[1])
-            else
-                return -100
-        lt:->
+            return -100
+        lt: ->
             if arguments.length == 2
-                return _compare(arguments[0],arguments[1])
+                return _compare(arguments[1],arguments[0])
+            return -100
+        clean: ->
+            if arguments.length == 0
+                return false
+            tempArr = arguments[0]
+            len = tempArr.length
+            if len < 1
+                return []
             else
-                return -100
-        sort:->
-
-
-
-        max:->
+                _newArr = []
+                _clean = ->
+                    _num = tempArr.shift()
+                    if typeof _num == 'string'
+                        _match = _num.match(VER_RE)
+                        _match && _match[0] == _num && _newArr.push _num
+                    tempArr.length > 0 && _clean()
+                _clean()
+                return _newArr
+        sort: ->
+            if arguments.length == 0
+                return false
+            tempArr = @clean(arguments[0])
+            if tempArr.length <= 1
+                return tempArr
+            else
+                return tempArr.sort (a,b)->
+                    return _compare(a,b) == 1
+        max: ->
+            if arguments.length == 0
+                return false
+            tempArr = arguments[0]
+            if tempArr.length == 0
+                return false
+            else
+                tempArr = @clean(tempArr)
+                if tempArr.length == 0
+                     return false
+                else
+                    arr = @sort(tempArr)
+                    return arr[arr.length - 1]
+        min: ->
+            if arguments.length == 0
+                return false
+            tempArr = arguments[0]
+            if tempArr.length == 0
+                return false
+            else
+                tempArr = @clean(tempArr)
+                if tempArr.length == 0
+                     return false
+                else
+                    return @sort(tempArr)[0]
 
     }
     return _compareVer
